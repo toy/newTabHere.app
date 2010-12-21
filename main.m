@@ -10,7 +10,6 @@
 #import <AppKit/AppKit.h>
 #import "TRGlue.h"
 #import "SEGlue.h"
-#import "NSArray+Map.h"
 
 NSString* currentTerminalTabEscapedDir(){
 	TRApplication *terminal = [TRApplication applicationWithName: @"Terminal"];
