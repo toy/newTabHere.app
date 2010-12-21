@@ -36,15 +36,23 @@ int main(int argc, char *argv[]) {
 	NSString *shellCommand = [@" clear && cd " stringByAppendingString:currentTerminalTabEscapedDir()];
 
 	TRApplication *terminal = [TRApplication applicationWithName: @"Terminal"];
-	[[terminal activate] send];
 
-	SEApplication *systemEvents = [SEApplication applicationWithName:@"System Events"];
-	SEReference *terminalRef = [[systemEvents processes] byName:@"Terminal"];
-	SEKeystrokeCommand *keystrokeCmd = [[terminalRef keystroke:@"t"] using:[SEConstant commandDown]];
-	[keystrokeCmd send];
+	CGEventFlags shiftCtrlAltFn = kCGEventFlagMaskShift | kCGEventFlagMaskControl | kCGEventFlagMaskAlternate | kCGEventFlagMaskSecondaryFn;
 
-	TRDoScriptCommand *cmd = [[terminal doScript:shellCommand] in:[[[[terminal windows] at:1] tabs] at:-1]];
-	[cmd send];
+	for (int i = 0; i < 100; i++) { // don't wait too long
+		if (0 == (shiftCtrlAltFn & CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState))) {
+			[[terminal activate] send];
+
+			SEApplication *systemEvents = [SEApplication applicationWithName:@"System Events"];
+			SEReference *terminalRef = [[systemEvents processes] byName:@"Terminal"];
+			[[[terminalRef keystroke:@"t"] using:[SEConstant commandDown]] send];
+
+			[[[terminal doScript:shellCommand] in:[[[[terminal windows] at:1] tabs] at:-1]] send];
+
+			break;
+		}
+		usleep(100000);
+	}
 
 	[pool release];
 	return 0;
