@@ -16,7 +16,7 @@ NSString* currentTerminalTabEscapedDir(){
 	NSString *tty = [[[[[terminal windows] at: 1] selectedTab] tty] getItem];
 
 	NSString *ttyDirRb = [[NSBundle mainBundle] pathForResource:@"tty_dir" ofType:@"rb"];
-	NSTask *ttyDirTask = [[NSTask alloc] init];
+	NSTask *ttyDirTask = [[[NSTask alloc] init] autorelease];
 	NSPipe *pipe = [NSPipe pipe];
 	NSFileHandle *pipeOut = [pipe fileHandleForReading];
 
